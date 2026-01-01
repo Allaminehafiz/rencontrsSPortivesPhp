@@ -1,0 +1,28 @@
+
+CREATE DATABASE IF NOT EXISTS BDrencontres CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE BDrencontres;
+
+
+CREATE TABLE sport (
+    id_sport INT AUTO_INCREMENT PRIMARY KEY,
+    design VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
+
+CREATE TABLE personne (
+    id_personne INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    depart VARCHAR(100) NOT NULL,
+    mail VARCHAR(150) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+
+CREATE TABLE pratique (
+    id_personne INT NOT NULL,
+    id_sport INT NOT NULL,
+    niveau ENUM('débutant', 'confirmé', 'pro', 'supporter') NOT NULL,
+    PRIMARY KEY (id_personne, id_sport),
+    FOREIGN KEY (id_personne) REFERENCES personne(id_personne) ON DELETE CASCADE,
+    FOREIGN KEY (id_sport) REFERENCES sport(id_sport) ON DELETE CASCADE
+) ENGINE=InnoDB;
