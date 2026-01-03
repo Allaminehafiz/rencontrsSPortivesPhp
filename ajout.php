@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-// 1. Récupération des infos du cookie si l'utilisateur est déjà venu (Cahier des charges point 18)
+
 $email_cookie = isset($_COOKIE['user_email']) ? $_COOKIE['user_email'] : '';
 $nom = $prenom = $depart = "";
 
@@ -16,7 +16,7 @@ if ($email_cookie != "") {
     }
 }
 
-// 2. Logique pour AJOUTER UN NOUVEAU SPORT (Cahier des charges point 43)
+
 if (isset($_POST['add_sport_btn']) && !empty($_POST['nouveau_sport'])) {
     $nouveau_sport = $_POST['nouveau_sport'];
     $ins = $pdo->prepare("INSERT INTO sport (design) VALUES (?)");
@@ -25,7 +25,7 @@ if (isset($_POST['add_sport_btn']) && !empty($_POST['nouveau_sport'])) {
     exit();
 }
 
-// 3. Logique d'INSCRIPTION FINALE
+
 if (isset($_POST['inscription_btn'])) {
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
@@ -34,13 +34,11 @@ if (isset($_POST['inscription_btn'])) {
     $id_sport = $_POST['sport_id'];
     $niveau = $_POST['niveau'];
 
-    // Vérifier si la personne existe déjà
-    $check = $pdo->prepare("SELECT id_personne FROM personne WHERE mail = ?");
     $check->execute([$email]);
     $personne = $check->fetch();
 
     if (!$personne) {
-        // Insertion nouvelle personne
+        
         $ins_pers = $pdo->prepare("INSERT INTO personne (nom, prenom, depart, mail) VALUES (?, ?, ?, ?)");
         $ins_pers->execute([$nom, $prenom, $depart, $email]);
         $id_personne = $pdo->lastInsertId();
@@ -48,14 +46,14 @@ if (isset($_POST['inscription_btn'])) {
         $id_personne = $personne['id_personne'];
     }
 
-    // Insertion dans la table pratique (Cahier des charges point 68)
+    
     $ins_pratique = $pdo->prepare("INSERT IGNORE INTO pratique (id_personne, id_sport, niveau) VALUES (?, ?, ?)");
     $ins_pratique->execute([$id_personne, $id_sport, $niveau]);
 
     echo "<script>alert('Inscription réussie ! Identifiant généré : $id_personne');</script>";
 }
 
-// 4. Récupérer les sports pour la liste déroulante
+
 $liste_sports = $pdo->query("SELECT * FROM sport")->fetchAll();
 ?>
 
